@@ -1,6 +1,6 @@
 from absl.testing import absltest
 import torch
-from transformation import (
+from alpha_zero.utils.transformation import (
     apply_horizontal_flip,
     apply_vertical_flip,
     apply_rotation,
@@ -46,7 +46,7 @@ class TestHorizontalFlip(absltest.TestCase):
         # Test with invalid input
         states = torch.randn(2, 3, 19)
         pi_probs = torch.randn(2, 19, 19)
-        with self.assertRaisesRegex(ValueError, 'Expect'):
+        with self.assertRaisesRegex(ValueError, "Expect"):
             states_out, pi_probs_out = apply_horizontal_flip(states, pi_probs)
 
     def test_apply_horizontal_flip_no_pass_move(self):
@@ -63,10 +63,14 @@ class TestHorizontalFlip(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs = torch.reshape(expected_pi_probs, (1, board_size, board_size))
+            expected_pi_probs = torch.reshape(
+                expected_pi_probs, (1, board_size, board_size)
+            )
             expected_pi_probs = torch.flip(expected_pi_probs, dims=[2])
             expected_pi_probs = torch.reshape(expected_pi_probs, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_horizontal_flip_pass_move(self):
         # Test with pass move
@@ -83,10 +87,14 @@ class TestHorizontalFlip(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs_no_pass = torch.reshape(expected_pi_probs[:-1], (1, board_size, board_size))
+            expected_pi_probs_no_pass = torch.reshape(
+                expected_pi_probs[:-1], (1, board_size, board_size)
+            )
             expected_pi_probs_no_pass = torch.flip(expected_pi_probs_no_pass, dims=[2])
             expected_pi_probs[:-1] = torch.reshape(expected_pi_probs_no_pass, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
 
 class TestVerticalFlip(absltest.TestCase):
@@ -102,7 +110,7 @@ class TestVerticalFlip(absltest.TestCase):
         # Test with invalid input
         states = torch.randn(2, 3, 19)
         pi_probs = torch.randn(2, 19, 19)
-        with self.assertRaisesRegex(ValueError, 'Expect'):
+        with self.assertRaisesRegex(ValueError, "Expect"):
             states_out, pi_probs_out = apply_vertical_flip(states, pi_probs)
 
     def test_apply_vertical_flip_no_pass_move(self):
@@ -119,10 +127,14 @@ class TestVerticalFlip(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs = torch.reshape(expected_pi_probs, (1, board_size, board_size))
+            expected_pi_probs = torch.reshape(
+                expected_pi_probs, (1, board_size, board_size)
+            )
             expected_pi_probs = torch.flip(expected_pi_probs, dims=[1])
             expected_pi_probs = torch.reshape(expected_pi_probs, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_vertical_flip_pass_move(self):
         # Test with pass move
@@ -139,10 +151,14 @@ class TestVerticalFlip(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs_no_pass = torch.reshape(expected_pi_probs[:-1], (1, board_size, board_size))
+            expected_pi_probs_no_pass = torch.reshape(
+                expected_pi_probs[:-1], (1, board_size, board_size)
+            )
             expected_pi_probs_no_pass = torch.flip(expected_pi_probs_no_pass, dims=[1])
             expected_pi_probs[:-1] = torch.reshape(expected_pi_probs_no_pass, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
 
 class TestRotation(absltest.TestCase):
@@ -158,11 +174,11 @@ class TestRotation(absltest.TestCase):
         # Test with invalid input
         states = torch.randn(2, 3, 19)
         pi_probs = torch.randn(2, 19, 19)
-        with self.assertRaisesRegex(ValueError, 'Expect'):
+        with self.assertRaisesRegex(ValueError, "Expect"):
             states_out, pi_probs_out = apply_rotation(states, pi_probs, 90)
 
         for angle in [30, 46, 220]:
-            with self.assertRaisesRegex(ValueError, 'Expect'):
+            with self.assertRaisesRegex(ValueError, "Expect"):
                 states_out, pi_probs_out = apply_rotation(states, pi_probs, angle)
 
     def test_apply_rotation_90_no_pass_move(self):
@@ -179,10 +195,14 @@ class TestRotation(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs = torch.reshape(expected_pi_probs, (1, board_size, board_size))
+            expected_pi_probs = torch.reshape(
+                expected_pi_probs, (1, board_size, board_size)
+            )
             expected_pi_probs = torch.rot90(expected_pi_probs, k=1, dims=[1, 2])
             expected_pi_probs = torch.reshape(expected_pi_probs, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_rotation_180_no_pass_move(self):
         # Test without pass move
@@ -198,10 +218,14 @@ class TestRotation(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs = torch.reshape(expected_pi_probs, (1, board_size, board_size))
+            expected_pi_probs = torch.reshape(
+                expected_pi_probs, (1, board_size, board_size)
+            )
             expected_pi_probs = torch.rot90(expected_pi_probs, k=2, dims=[1, 2])
             expected_pi_probs = torch.reshape(expected_pi_probs, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_rotation_270_no_pass_move(self):
         # Test without pass move
@@ -217,10 +241,14 @@ class TestRotation(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs = torch.reshape(expected_pi_probs, (1, board_size, board_size))
+            expected_pi_probs = torch.reshape(
+                expected_pi_probs, (1, board_size, board_size)
+            )
             expected_pi_probs = torch.rot90(expected_pi_probs, k=3, dims=[1, 2])
             expected_pi_probs = torch.reshape(expected_pi_probs, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_rotation_90_with_pass_move_small_case(self):
         # Test with pass move
@@ -261,7 +289,9 @@ class TestRotation(absltest.TestCase):
             ]
         )
         pi_probs = torch.tensor([[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.001]])
-        expected_pi_probs = torch.tensor([[0.3, 0.6, 0.9, 0.2, 0.5, 0.8, 0.1, 0.4, 0.7, 0.001]])
+        expected_pi_probs = torch.tensor(
+            [[0.3, 0.6, 0.9, 0.2, 0.5, 0.8, 0.1, 0.4, 0.7, 0.001]]
+        )
         states_out, pi_probs_out = apply_rotation(states, pi_probs, 90)
 
         self.assertTrue(torch.all(torch.eq(states_out, expected_states)))
@@ -282,10 +312,16 @@ class TestRotation(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs_no_pass = torch.reshape(expected_pi_probs[:-1], (1, board_size, board_size))
-            expected_pi_probs_no_pass = torch.rot90(expected_pi_probs_no_pass, k=1, dims=[1, 2])
+            expected_pi_probs_no_pass = torch.reshape(
+                expected_pi_probs[:-1], (1, board_size, board_size)
+            )
+            expected_pi_probs_no_pass = torch.rot90(
+                expected_pi_probs_no_pass, k=1, dims=[1, 2]
+            )
             expected_pi_probs[:-1] = torch.reshape(expected_pi_probs_no_pass, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_rotation_180_with_pass_move(self):
         # Test with pass move
@@ -302,10 +338,16 @@ class TestRotation(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs_no_pass = torch.reshape(expected_pi_probs[:-1], (1, board_size, board_size))
-            expected_pi_probs_no_pass = torch.rot90(expected_pi_probs_no_pass, k=2, dims=[1, 2])
+            expected_pi_probs_no_pass = torch.reshape(
+                expected_pi_probs[:-1], (1, board_size, board_size)
+            )
+            expected_pi_probs_no_pass = torch.rot90(
+                expected_pi_probs_no_pass, k=2, dims=[1, 2]
+            )
             expected_pi_probs[:-1] = torch.reshape(expected_pi_probs_no_pass, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
     def test_apply_rotation_270_with_pass_move(self):
         # Test with pass move
@@ -322,11 +364,17 @@ class TestRotation(absltest.TestCase):
             self.assertTrue(torch.all(torch.eq(states_out[i, ...], expected_state)))
 
             expected_pi_probs = pi_probs[i, ...]
-            expected_pi_probs_no_pass = torch.reshape(expected_pi_probs[:-1], (1, board_size, board_size))
-            expected_pi_probs_no_pass = torch.rot90(expected_pi_probs_no_pass, k=3, dims=[1, 2])
+            expected_pi_probs_no_pass = torch.reshape(
+                expected_pi_probs[:-1], (1, board_size, board_size)
+            )
+            expected_pi_probs_no_pass = torch.rot90(
+                expected_pi_probs_no_pass, k=3, dims=[1, 2]
+            )
             expected_pi_probs[:-1] = torch.reshape(expected_pi_probs_no_pass, (-1,))
-            self.assertTrue(torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs)))
+            self.assertTrue(
+                torch.all(torch.eq(pi_probs_out[i, ...], expected_pi_probs))
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     absltest.main()

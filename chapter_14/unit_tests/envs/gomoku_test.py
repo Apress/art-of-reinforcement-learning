@@ -1,30 +1,31 @@
 """Tests for envs.gomoku.py."""
+
 from absl.testing import absltest
 from absl.testing import parameterized
 import numpy as np
 
-from envs.gomoku import GomokuEnv
+from alpha_zero.envs.gomoku import GomokuEnv
 
 
 class GomokuEnvTest(parameterized.TestCase):
     # player id: 1 - black, 2 - white
     @parameterized.named_parameters(
-        ('diagonal_top_left_00_black', 1, [0, 8, 16, 24, 32]),
-        ('diagonal_top_left_00_white', 2, [0, 8, 16, 24, 32]),
-        ('diagonal_top_left_12_black', 1, [9, 17, 25, 33, 41]),
-        ('diagonal_top_left_12_white', 2, [9, 17, 25, 33, 41]),
-        ('diagonal_top_right_06_black', 1, [6, 12, 18, 24, 30]),
-        ('diagonal_top_right_06_white', 2, [6, 12, 18, 24, 30]),
-        ('diagonal_top_right_26_black', 1, [20, 26, 32, 38, 44]),
-        ('diagonal_top_right_26_white', 2, [20, 26, 32, 38, 44]),
-        ('vertical_00_black', 1, [0, 7, 14, 21, 28]),
-        ('vertical_00_white', 2, [0, 7, 14, 21, 28]),
-        ('vertical_11_black', 1, [8, 15, 22, 29, 36]),
-        ('vertical_11_white', 2, [8, 15, 22, 29, 36]),
-        ('horizontal_00_black', 1, [0, 1, 2, 3, 4]),
-        ('horizontal_00_white', 2, [0, 1, 2, 3, 4]),
-        ('horizontal_52_black', 1, [37, 38, 39, 40, 41]),
-        ('horizontal_52_white', 2, [37, 38, 39, 40, 41]),
+        ("diagonal_top_left_00_black", 1, [0, 8, 16, 24, 32]),
+        ("diagonal_top_left_00_white", 2, [0, 8, 16, 24, 32]),
+        ("diagonal_top_left_12_black", 1, [9, 17, 25, 33, 41]),
+        ("diagonal_top_left_12_white", 2, [9, 17, 25, 33, 41]),
+        ("diagonal_top_right_06_black", 1, [6, 12, 18, 24, 30]),
+        ("diagonal_top_right_06_white", 2, [6, 12, 18, 24, 30]),
+        ("diagonal_top_right_26_black", 1, [20, 26, 32, 38, 44]),
+        ("diagonal_top_right_26_white", 2, [20, 26, 32, 38, 44]),
+        ("vertical_00_black", 1, [0, 7, 14, 21, 28]),
+        ("vertical_00_white", 2, [0, 7, 14, 21, 28]),
+        ("vertical_11_black", 1, [8, 15, 22, 29, 36]),
+        ("vertical_11_white", 2, [8, 15, 22, 29, 36]),
+        ("horizontal_00_black", 1, [0, 1, 2, 3, 4]),
+        ("horizontal_00_white", 2, [0, 1, 2, 3, 4]),
+        ("horizontal_52_black", 1, [37, 38, 39, 40, 41]),
+        ("horizontal_52_white", 2, [37, 38, 39, 40, 41]),
     )
     # diagonal_top_left_00:
     # [1 0 0 0 0 0 0]
@@ -122,10 +123,10 @@ class GomokuEnvTest(parameterized.TestCase):
         self.assertEqual(reward, 1.0)
 
     @parameterized.named_parameters(
-        ('num_3_black', 1, 3),
-        ('num_3_white', 2, 3),
-        ('num_4_black', 1, 4),
-        ('num_4_white', 2, 4),
+        ("num_3_black", 1, 3),
+        ("num_3_white", 2, 3),
+        ("num_4_black", 1, 4),
+        ("num_4_white", 2, 4),
     )
     def test_num_to_win(self, winner_id, num_to_win):
         env = GomokuEnv(board_size=7, num_to_win=num_to_win)
@@ -154,5 +155,6 @@ class GomokuEnvTest(parameterized.TestCase):
         self.assertEqual(env.winner, winner_id)
         self.assertEqual(reward, 1.0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     absltest.main()

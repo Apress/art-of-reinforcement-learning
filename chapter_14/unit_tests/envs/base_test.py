@@ -17,45 +17,47 @@ from absl.testing import absltest
 from absl.testing import parameterized
 import numpy as np
 
-from envs.base import BoardGameEnv
+from alpha_zero.envs.base import BoardGameEnv
 
 
 class BoardGameEnvTest(parameterized.TestCase):
-    @parameterized.named_parameters(('board_size_7', 7), ('board_size_9', 9))
+    @parameterized.named_parameters(("board_size_7", 7), ("board_size_9", 9))
     def test_env_setup(self, board_size):
         env = BoardGameEnv(board_size)
         env.reset()
 
-        np.testing.assert_equal(env.board, np.zeros((board_size, board_size), dtype=np.uint8))
+        np.testing.assert_equal(
+            env.board, np.zeros((board_size, board_size), dtype=np.uint8)
+        )
         self.assertEqual(env.to_play, env.black_player)  # black
         self.assertEqual(env.opponent_player, env.white_player)  # white
 
-    @parameterized.named_parameters(('action_-1', -1), ('action_50', 50))
+    @parameterized.named_parameters(("action_-1", -1), ("action_50", 50))
     def test_invalid_action_out_of_range(self, action):
         env = BoardGameEnv(board_size=7)
         env.reset()
 
-        with self.assertRaisesRegex(ValueError, 'Invalid action'):
+        with self.assertRaisesRegex(ValueError, "Invalid action"):
             env.step(action)
 
-    @parameterized.named_parameters(('action_7', 7), ('action_13', 13))
+    @parameterized.named_parameters(("action_7", 7), ("action_13", 13))
     def test_invalid_action_already_taken(self, action):
         env = BoardGameEnv(board_size=7)
         env.reset()
 
         env.step(action)
-        with self.assertRaisesRegex(ValueError, 'Illegal action'):
+        with self.assertRaisesRegex(ValueError, "Illegal action"):
             env.step(action)
 
     @parameterized.named_parameters(
-        ('onboard_(0,0)', 7, (0, 0), True),
-        ('onboard_(0,6)', 7, (0, 6), True),
-        ('onboard_(6,6)', 7, (6, 6), True),
-        ('onboard_(6,0)', 7, (6, 0), True),
-        ('onboard_(3,4)', 7, (3, 4), True),
-        ('not_onboard_(-1,6)', 7, (-1, 6), False),
-        ('not_onboard_(0,7)', 7, (0, 7), False),
-        ('onboard_(0,7)', 9, (0, 7), True),
+        ("onboard_(0,0)", 7, (0, 0), True),
+        ("onboard_(0,6)", 7, (0, 6), True),
+        ("onboard_(6,6)", 7, (6, 6), True),
+        ("onboard_(6,0)", 7, (6, 0), True),
+        ("onboard_(3,4)", 7, (3, 4), True),
+        ("not_onboard_(-1,6)", 7, (-1, 6), False),
+        ("not_onboard_(0,7)", 7, (0, 7), False),
+        ("onboard_(0,7)", 9, (0, 7), True),
     )
     def test_is_coords_on_board(self, board_size, coords, expected_result):
         env = BoardGameEnv(board_size=board_size)
@@ -86,16 +88,16 @@ class BoardGameEnvTest(parameterized.TestCase):
             self.assertEqual(result_action, action)
 
     @parameterized.named_parameters(
-        ('gtp_9_A9', 9, 'A9', 0),
-        ('gtp_9_J9', 9, 'J9', 8),
-        ('gtp_9_A1', 9, 'A1', 72),
-        ('gtp_9_J1', 9, 'J1', 80),
-        ('gtp_9_C8', 9, 'C8', 11),
-        ('gtp_19_A19', 19, 'A19', 0),
-        ('gtp_19_T19', 19, 'T19', 18),
-        ('gtp_19_A1', 19, 'A1', 342),
-        ('gtp_19_T1', 19, 'T1', 360),
-        ('gtp_19_C18', 19, 'C18', 21),
+        ("gtp_9_A9", 9, "A9", 0),
+        ("gtp_9_J9", 9, "J9", 8),
+        ("gtp_9_A1", 9, "A1", 72),
+        ("gtp_9_J1", 9, "J1", 80),
+        ("gtp_9_C8", 9, "C8", 11),
+        ("gtp_19_A19", 19, "A19", 0),
+        ("gtp_19_T19", 19, "T19", 18),
+        ("gtp_19_A1", 19, "A1", 342),
+        ("gtp_19_T1", 19, "T1", 360),
+        ("gtp_19_C18", 19, "C18", 21),
     )
     def test_gtp_to_action(self, board_size, gtpc, expected_action):
         env = BoardGameEnv(board_size=board_size)
@@ -116,14 +118,16 @@ class BoardGameEnvTest(parameterized.TestCase):
 
 
 class StackHistoryTest(parameterized.TestCase):
-    @parameterized.named_parameters(('stack_4', 4), ('stack_8', 8))
+    @parameterized.named_parameters(("stack_4", 4), ("stack_8", 8))
     def test_env_initial_state(self, num_stack):
         board_size = 7
         env = BoardGameEnv(board_size=board_size, num_stack=num_stack)
         obs = env.reset()
 
         zero_planes = np.zeros((num_stack * 2, board_size, board_size), dtype=np.uint8)
-        player_plane = np.ones((1, board_size, board_size), dtype=np.uint8)  # Black plays first.
+        player_plane = np.ones(
+            (1, board_size, board_size), dtype=np.uint8
+        )  # Black plays first.
         np.testing.assert_equal(obs, np.concatenate([zero_planes, player_plane]))
 
     def test_env_stacked_state(self):
@@ -168,5 +172,5 @@ class StackHistoryTest(parameterized.TestCase):
         self.assertTrue(np.array_equal(obs, expected))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     absltest.main()
